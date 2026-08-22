@@ -3,704 +3,414 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>SISTEM | Dashboard Keaktifan</title>
-
+  <title>SISTEM | Student Activity</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-
-  <div>
-    <h1>SISTEM</h1>
-    <p>Fokus • Aktivitas • Refleksi • Berkembang</p>
-  </div>
-
-  <div class="clock-box">
-    <div id="currentDate">Memuat tanggal...</div>
-    <div id="clock">00:00:00</div>
-  </div>
-
-</header>
-
-
-<main>
-
-  <!-- DASHBOARD -->
-
-  <section class="hero">
-
-    <h2>Dashboard Keaktifan</h2>
-
-    <p id="dailyStatus">
-      Selesaikan aktivitas hari ini untuk membangun konsistensi.
-    </p>
-
-    <div class="stats-grid">
-
-      <div class="stat-card">
-        <span>⭐ Poin Hari Ini</span>
-        <strong id="todayPoints">0</strong>
-      </div>
-
-      <div class="stat-card">
-        <span>🔥 Streak</span>
-        <strong id="streak">0 Hari</strong>
-      </div>
-
-      <div class="stat-card">
-        <span>📈 Total Poin</span>
-        <strong id="totalPoints">0</strong>
-      </div>
-
+  <header>
+    <div>
+      <h1>SISTEM</h1>
+      <p>Fokus • Aktivitas • Refleksi • Berkembang</p>
     </div>
 
-  </section>
+    <div class="clock-box">
+      <div id="currentDate">Memuat tanggal...</div>
+      <div id="clock">00:00:00</div>
+    </div>
+  </header>
 
+  <main>
 
+    <!-- STATUS -->
+    <section class="hero">
+      <h2>Dashboard Keaktifan</h2>
+      <p id="dailyStatus">Selesaikan aktivitas hari ini untuk membangun konsistensi.</p>
 
-  <!-- ABSENSI -->
-
-  <section class="card">
-
-    <h2>📋 Absensi Hari Ini</h2>
-
-    <p class="subtitle">
-      Selesaikan game fokus selama 1 menit sebelum tombol absensi terbuka.
-    </p>
-
-    <div class="attendance-grid">
-
-
-      <div class="attendance-card">
-
-        <h3>🌅 Absensi Pagi</h3>
-
-        <p>06.30 – 07.00</p>
-
-        <div class="session-status" id="morningStatus">
-          Menunggu waktu absensi
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span>⭐ Poin Hari Ini</span>
+          <strong id="todayPoints">0</strong>
         </div>
 
-        <button
-          onclick="startSession('morning')"
-          id="morningButton">
-
-          Mulai Game Fokus
-
-        </button>
-
-      </div>
-
-
-
-      <div class="attendance-card">
-
-        <h3>☀️ Absensi Siang</h3>
-
-        <p>11.30 – 12.00</p>
-
-        <div class="session-status" id="afternoonStatus">
-          Menunggu waktu absensi
+        <div class="stat-card">
+          <span>🔥 Streak</span>
+          <strong id="streak">0 Hari</strong>
         </div>
 
-        <button
-          onclick="startSession('afternoon')"
-          id="afternoonButton">
-
-          Mulai Game Fokus
-
-        </button>
-
-      </div>
-
-
-
-      <div class="attendance-card">
-
-        <h3>🌆 Absensi Sore</h3>
-
-        <p>14.30 – 15.00</p>
-
-        <div class="session-status" id="eveningStatus">
-          Menunggu waktu absensi
+        <div class="stat-card">
+          <span>📈 Total Poin</span>
+          <strong id="totalPoints">0</strong>
         </div>
-
-        <button
-          onclick="startSession('evening')"
-          id="eveningButton">
-
-          Mulai Game Fokus
-
-        </button>
-
       </div>
+    </section>
 
-    </div>
 
-  </section>
-
-
-
-  <!-- KEGIATAN -->
-
-  <section class="card">
-
-    <h2>📌 Kegiatan Hari Ini</h2>
-
-    <p class="subtitle">
-      Tandai kegiatan yang telah kamu selesaikan.
-    </p>
-
-    <div class="activity-list">
-
-      <label class="activity-item">
-
-        <input
-          type="checkbox"
-          class="activity-check"
-          data-activity="Belajar materi">
-
-        <span>📚 Belajar materi</span>
-
-      </label>
-
-
-      <label class="activity-item">
-
-        <input
-          type="checkbox"
-          class="activity-check"
-          data-activity="Mengerjakan tugas">
-
-        <span>✏️ Mengerjakan tugas</span>
-
-      </label>
-
-
-      <label class="activity-item">
-
-        <input
-          type="checkbox"
-          class="activity-check"
-          data-activity="Latihan mandiri">
-
-        <span>🧠 Latihan mandiri</span>
-
-      </label>
-
-
-      <label class="activity-item">
-
-        <input
-          type="checkbox"
-          class="activity-check"
-          data-activity="Membaca atau riset">
-
-        <span>📖 Membaca atau riset</span>
-
-      </label>
-
-    </div>
-
-  </section>
-
-
-
-  <!-- REFLEKSI -->
-
-  <section class="card reflection-card">
-
-    <h2>📝 Refleksi Harian</h2>
-
-    <p class="subtitle">
-      Refleksi dapat dibuka setelah menyelesaikan proses absensi sore.
-    </p>
-
-
-    <div id="reflectionLocked">
-
-      🔒 Refleksi masih terkunci.
-
-    </div>
-
-
-    <div id="reflectionForm" class="hidden">
-
-
-      <div class="question-box">
-
-        <label id="question1"></label>
-
-        <textarea
-          id="answer1"
-          placeholder="Tulis jawabanmu..."></textarea>
-
-      </div>
-
-
-      <div class="question-box">
-
-        <label id="question2"></label>
-
-        <textarea
-          id="answer2"
-          placeholder="Tulis jawabanmu..."></textarea>
-
-      </div>
-
-
-      <div class="question-box">
-
-        <label id="question3"></label>
-
-        <textarea
-          id="answer3"
-          placeholder="Tulis jawabanmu..."></textarea>
-
-      </div>
-
-
-      <button
-        onclick="submitReflection()"
-        id="reflectionButton">
-
-        Simpan Refleksi
-
-      </button>
-
-    </div>
-
-  </section>
-
-
-
-  <!-- ================================================= -->
-  <!-- FITUR TAMBAHAN: KASUS MINGGUAN -->
-  <!-- ================================================= -->
-
-  <section class="card weekly-case">
-
-    <div class="weekly-header">
-
-      <div>
-
-        <h2>🧩 Kasus Mingguan</h2>
-
-        <p class="subtitle">
-          Tantangan problem solving berdasarkan masalah nyata.
-        </p>
-
-      </div>
-
-
-      <div class="level-box">
-
-        <span>LEVEL</span>
-
-        <strong id="caseLevel">
-          1
-        </strong>
-
-      </div>
-
-    </div>
-
-
-
-    <div class="case-meta">
-
-      <span id="caseCategory">
-        🤖 Teknologi & Digital
-      </span>
-
-      <span>
-        ⏳ 1 Minggu
-      </span>
-
-    </div>
-
-
-
-    <div class="case-question">
-
-      <small>MASALAH MINGGU INI</small>
-
-      <h3 id="caseTitle">
-        Memuat kasus...
-      </h3>
-
-      <p id="caseDescription">
-        Memuat kasus...
+    <!-- ABSENSI -->
+    <section class="card">
+      <h2>📋 Absensi Hari Ini</h2>
+      <p class="subtitle">
+        Selesaikan game fokus selama 1 menit sebelum tombol absensi terbuka.
       </p>
 
-    </div>
+      <div class="attendance-grid">
 
+        <div class="attendance-card" data-session="morning">
+          <h3>🌅 Absensi Pagi</h3>
+          <p>06.30 – 07.00</p>
 
+          <div class="session-status" id="morningStatus">
+            Menunggu waktu absensi
+          </div>
 
-    <div class="case-progress">
+          <button onclick="startSession('morning')" id="morningButton">
+            Mulai Game Fokus
+          </button>
+        </div>
 
-      <div class="progress-title">
+        <div class="attendance-card" data-session="afternoon">
+          <h3>☀️ Absensi Siang</h3>
+          <p>11.30 – 12.00</p>
 
-        <span>
-          Proses SISTEM
-        </span>
+          <div class="session-status" id="afternoonStatus">
+            Menunggu waktu absensi
+          </div>
 
-        <span id="caseProgress">
-          0 / 6
-        </span>
+          <button onclick="startSession('afternoon')" id="afternoonButton">
+            Mulai Game Fokus
+          </button>
+        </div>
+
+        <div class="attendance-card" data-session="evening">
+          <h3>🌆 Absensi Sore + Refleksi</h3>
+          <p>14.30 – 15.00</p>
+
+          <div class="session-status" id="eveningStatus">
+            Menunggu waktu absensi
+          </div>
+
+          <button onclick="startSession('evening')" id="eveningButton">
+            Mulai Game Fokus
+          </button>
+        </div>
 
       </div>
+    </section>
 
-      <div class="progress-bar">
 
-        <div
-          id="caseProgressBar"
-          class="progress-fill">
+    <!-- KEGIATAN -->
+    <section class="card">
+      <h2>📌 Kegiatan Hari Ini</h2>
+      <p class="subtitle">Tandai kegiatan yang telah kamu selesaikan.</p>
+
+      <div class="activity-list">
+
+        <label class="activity-item">
+          <input type="checkbox" class="activity-check" data-activity="Belajar materi">
+          <span>📚 Belajar materi</span>
+        </label>
+
+        <label class="activity-item">
+          <input type="checkbox" class="activity-check" data-activity="Mengerjakan tugas">
+          <span>✏️ Mengerjakan tugas</span>
+        </label>
+
+        <label class="activity-item">
+          <input type="checkbox" class="activity-check" data-activity="Latihan mandiri">
+          <span>🧠 Latihan mandiri</span>
+        </label>
+
+        <label class="activity-item">
+          <input type="checkbox" class="activity-check" data-activity="Membaca atau riset">
+          <span>📖 Membaca atau riset</span>
+        </label>
+
+      </div>
+    </section>
+
+
+    <!-- REFLEKSI -->
+    <section class="card reflection-card">
+      <h2>📝 Refleksi Harian</h2>
+      <p class="subtitle">
+        Refleksi dapat dibuka setelah menyelesaikan proses absensi sore.
+      </p>
+
+      <div id="reflectionLocked">
+        🔒 Refleksi masih terkunci.
+      </div>
+
+      <div id="reflectionForm" class="hidden">
+        <div class="question-box">
+          <label id="question1"></label>
+          <textarea id="answer1" placeholder="Tulis jawabanmu..."></textarea>
+        </div>
+
+        <div class="question-box">
+          <label id="question2"></label>
+          <textarea id="answer2" placeholder="Tulis jawabanmu..."></textarea>
+        </div>
+
+        <div class="question-box">
+          <label id="question3"></label>
+          <textarea id="answer3" placeholder="Tulis jawabanmu..."></textarea>
+        </div>
+
+        <button onclick="submitReflection()" id="reflectionButton">
+          Simpan Refleksi
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- KASUS MINGGUAN - FITUR BARU -->
+    <!-- ============================= -->
+
+    <section class="card weekly-case-card">
+
+      <div class="weekly-case-header">
+        <div>
+          <h2>🧩 Kasus Mingguan</h2>
+          <p class="subtitle">
+            Tantangan problem solving berdasarkan masalah yang relevan.
+          </p>
+        </div>
+
+        <div class="case-level-box">
+          <span>Level</span>
+          <strong id="caseLevel">1</strong>
+        </div>
+      </div>
+
+      <div class="weekly-case-tags">
+        <span id="caseCategory">Kategori</span>
+        <span id="caseDeadline">1 Minggu</span>
+      </div>
+
+      <div class="case-main-box">
+        <h3 id="caseTitle">Memuat kasus...</h3>
+        <p id="caseDescription">
+          Memuat kasus mingguan...
+        </p>
+      </div>
+
+
+      <div id="weeklyCaseForm">
+
+        <div class="question-box">
+          <label>
+            <strong>S — Situasi</strong>
+          </label>
+          <p>Apa masalah utama yang terjadi?</p>
+
+          <textarea
+            id="caseS1"
+            placeholder="Jelaskan situasi atau masalah..."
+          ></textarea>
+        </div>
+
+
+        <div class="question-box">
+          <label>
+            <strong>I — Identifikasi</strong>
+          </label>
+          <p>Apa inti dan penyebab masalah?</p>
+
+          <textarea
+            id="caseI"
+            placeholder="Identifikasi inti masalah dan penyebabnya..."
+          ></textarea>
+        </div>
+
+
+        <div class="question-box">
+          <label>
+            <strong>S — Susun</strong>
+          </label>
+          <p>Pecah masalah menjadi beberapa bagian.</p>
+
+          <textarea
+            id="caseS2"
+            placeholder="Susun bagian-bagian masalah..."
+          ></textarea>
+        </div>
+
+
+        <div class="question-box">
+          <label>
+            <strong>T — Temukan Hubungan</strong>
+          </label>
+          <p>Bagaimana faktor-faktor tersebut saling berhubungan?</p>
+
+          <textarea
+            id="caseT"
+            placeholder="Jelaskan hubungan antar faktor..."
+          ></textarea>
+        </div>
+
+
+        <div class="question-box">
+          <label>
+            <strong>E — Evaluasi</strong>
+          </label>
+          <p>Bandingkan solusi yang mungkin dilakukan.</p>
+
+          <textarea
+            id="caseE"
+            placeholder="Tuliskan beberapa solusi dan kelebihan serta kekurangannya..."
+          ></textarea>
+        </div>
+
+
+        <div class="question-box">
+          <label>
+            <strong>M — Menjadi Problem Solver</strong>
+          </label>
+          <p>
+            Pilih solusi terbaik dan jelaskan bagaimana solusi tersebut
+            dapat diterapkan.
+          </p>
+
+          <textarea
+            id="caseM"
+            placeholder="Apa solusi yang kamu pilih dan bagaimana cara menerapkannya?"
+          ></textarea>
+        </div>
+
+
+        <div class="weekly-case-footer">
+
+          <div>
+            <strong>🏆 Poin Keaktifan</strong>
+
+            <p id="caseScoreInfo">
+              Kasus yang selesai akan masuk ke poin keaktifan.
+            </p>
+          </div>
+
+          <button
+            onclick="submitWeeklyCase()"
+            id="caseSubmitButton"
+          >
+            Kumpulkan Kasus
+          </button>
 
         </div>
 
       </div>
 
-    </div>
+    </section>
 
 
+    <!-- GRAFIK -->
+    <section class="card">
+      <h2>📊 Perkembangan Keaktifan</h2>
 
-    <!-- S -->
+      <div class="chart-tabs">
 
-    <div class="system-step">
+        <button
+          onclick="showChart('weekly')"
+          class="active-tab"
+          id="weeklyTab"
+        >
+          Mingguan
+        </button>
 
-      <div class="step-letter">
-        S
-      </div>
-
-      <div class="step-content">
-
-        <h3>Situasi</h3>
-
-        <p>
-          Pahami dan jelaskan situasi masalah.
-        </p>
-
-        <textarea
-          id="caseS1"
-          placeholder="Apa masalah yang terjadi?"></textarea>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- I -->
-
-    <div class="system-step">
-
-      <div class="step-letter">
-        I
-      </div>
-
-      <div class="step-content">
-
-        <h3>Identifikasi</h3>
-
-        <p>
-          Tentukan inti dan penyebab masalah.
-        </p>
-
-        <textarea
-          id="caseI"
-          placeholder="Apa inti masalah dan penyebabnya?"></textarea>
+        <button
+          onclick="showChart('monthly')"
+          id="monthlyTab"
+        >
+          Bulanan
+        </button>
 
       </div>
 
-    </div>
-
-
-
-    <!-- S -->
-
-    <div class="system-step">
-
-      <div class="step-letter">
-        S
+      <div class="chart-wrapper">
+        <canvas id="activityChart"></canvas>
       </div>
 
-      <div class="step-content">
+      <div class="insight-box" id="insight">
+        Mulai aktivitasmu hari ini untuk melihat perkembangan.
+      </div>
 
-        <h3>Susun</h3>
+    </section>
 
-        <p>
-          Pecah masalah menjadi beberapa bagian.
-        </p>
+  </main>
 
-        <textarea
-          id="caseS2"
-          placeholder="Apa saja bagian dari masalah tersebut?"></textarea>
+
+  <!-- MODAL GAME -->
+  <div class="modal hidden" id="gameModal">
+
+    <div class="modal-content">
+
+      <div class="game-header">
+
+        <h2 id="gameTitle">
+          Game Fokus
+        </h2>
+
+        <span id="timer">
+          60
+        </span>
+
+      </div>
+
+      <p id="gameInstruction"></p>
+
+      <div id="gameArea"></div>
+
+      <div id="gameResult" class="hidden">
+
+        <h3>
+          Game selesai! 🎉
+        </h3>
+
+        <p id="gameScore"></p>
+
+        <button onclick="unlockAttendance()">
+          Buka Absensi
+        </button>
 
       </div>
 
     </div>
 
+  </div>
 
 
-    <!-- T -->
+  <!-- MODAL ABSEN -->
+  <div class="modal hidden" id="attendanceModal">
 
-    <div class="system-step">
+    <div class="modal-content small-modal">
 
-      <div class="step-letter">
-        T
-      </div>
-
-      <div class="step-content">
-
-        <h3>Temukan Hubungan</h3>
-
-        <p>
-          Temukan hubungan antara berbagai faktor.
-        </p>
-
-        <textarea
-          id="caseT"
-          placeholder="Apa faktor yang saling berhubungan?"></textarea>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- E -->
-
-    <div class="system-step">
-
-      <div class="step-letter">
-        E
-      </div>
-
-      <div class="step-content">
-
-        <h3>Evaluasi</h3>
-
-        <p>
-          Bandingkan beberapa alternatif solusi.
-        </p>
-
-        <textarea
-          id="caseE"
-          placeholder="Apa beberapa solusi yang mungkin?"></textarea>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- M -->
-
-    <div class="system-step">
-
-      <div class="step-letter">
-        M
-      </div>
-
-      <div class="step-content">
-
-        <h3>Menjadi Problem Solver</h3>
-
-        <p>
-          Pilih solusi terbaik dan buat rencana tindakan.
-        </p>
-
-        <textarea
-          id="caseM"
-          placeholder="Solusi apa yang kamu pilih dan bagaimana menerapkannya?"></textarea>
-
-      </div>
-
-    </div>
-
-
-
-    <div class="case-bottom">
-
-      <div>
-
-        <strong>
-          🏆 Maksimal 100 poin
-        </strong>
-
-        <p id="caseScoreInfo">
-          Kasus yang selesai akan masuk ke poin keaktifan.
-        </p>
-
-      </div>
-
-
-      <button
-        onclick="submitWeeklyCase()"
-        id="caseSubmitButton">
-
-        Kumpulkan Kasus
-
-      </button>
-
-    </div>
-
-  </section>
-
-
-
-  <!-- GRAFIK -->
-
-  <section class="card">
-
-    <h2>📊 Perkembangan Keaktifan</h2>
-
-
-    <div class="chart-tabs">
-
-      <button
-        onclick="showChart('weekly')"
-        class="active-tab"
-        id="weeklyTab">
-
-        Mingguan
-
-      </button>
-
-
-      <button
-        onclick="showChart('monthly')"
-        id="monthlyTab">
-
-        Bulanan
-
-      </button>
-
-    </div>
-
-
-    <div class="chart-wrapper">
-
-      <canvas id="activityChart"></canvas>
-
-    </div>
-
-
-    <div
-      class="insight-box"
-      id="insight">
-
-      Mulai aktivitasmu hari ini untuk melihat perkembangan.
-
-    </div>
-
-  </section>
-
-</main>
-
-
-
-<!-- ================================================= -->
-<!-- MODAL GAME -->
-<!-- ================================================= -->
-
-<div
-  class="modal hidden"
-  id="gameModal">
-
-  <div class="modal-content">
-
-    <div class="game-header">
-
-      <h2 id="gameTitle">
-        Game Fokus
+      <h2>
+        ✅ Absensi
       </h2>
 
-      <span id="timer">
-        60
-      </span>
+      <p id="attendanceText">
+        Apakah kamu yakin ingin melakukan absensi?
+      </p>
 
-    </div>
-
-
-    <p id="gameInstruction"></p>
-
-
-    <div id="gameArea"></div>
-
-
-    <div
-      id="gameResult"
-      class="hidden">
-
-      <h3>
-        Game selesai! 🎉
-      </h3>
-
-      <p id="gameScore"></p>
-
+      <button onclick="confirmAttendance()">
+        Absen Sekarang
+      </button>
 
       <button
-        onclick="unlockAttendance()">
-
-        Buka Absensi
-
+        class="secondary"
+        onclick="closeAttendanceModal()"
+      >
+        Batal
       </button>
 
     </div>
 
   </div>
 
-</div>
 
-
-
-<!-- MODAL ABSEN -->
-
-<div
-  class="modal hidden"
-  id="attendanceModal">
-
-  <div class="modal-content small-modal">
-
-    <h2>
-      ✅ Absensi
-    </h2>
-
-    <p>
-      Apakah kamu yakin ingin melakukan absensi?
-    </p>
-
-
-    <button
-      onclick="confirmAttendance()">
-
-      Absen Sekarang
-
-    </button>
-
-
-    <button
-      class="secondary"
-      onclick="closeAttendanceModal()">
-
-      Batal
-
-    </button>
-
-  </div>
-
-</div>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
