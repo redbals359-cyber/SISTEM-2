@@ -1,143 +1,2113 @@
-/* =========================
-   KASUS MINGGUAN
-========================= */
+// ==========================================
+// DATA UTAMA
+// ==========================================
 
-.weekly-case-card {
-  border-top: 4px solid #2563eb;
+let currentSession = null;
+let selectedGame = null;
+let gameTimer = null;
+let timeLeft = 60;
+let gameScore = 0;
+let gameFinished = false;
+
+const today =
+  new Date().toISOString().split("T")[0];
+
+
+let userData =
+  JSON.parse(
+    localStorage.getItem("sistemUserData")
+  ) || {
+
+    totalPoints: 0,
+
+    streak: 0,
+
+    lastActiveDate: null,
+
+    history: {},
+
+    dailyData: {}
+
+  };
+
+
+if (!userData.dailyData[today]) {
+
+  userData.dailyData[today] = {
+
+    morning: false,
+
+    afternoon: false,
+
+    evening: false,
+
+    reflection: false,
+
+    activities: [],
+
+    points: 0,
+
+    weeklyCaseCompleted: false,
+
+    weeklyCaseScore: 0
+
+  };
+
 }
 
-.case-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 15px;
+
+const daily =
+  userData.dailyData[today];
+
+
+// ==========================================
+// JAM
+// ==========================================
+
+function updateClock() {
+
+  const now = new Date();
+
+  document.getElementById("clock")
+    .textContent =
+    now.toLocaleTimeString("id-ID");
+
+
+  document.getElementById("currentDate")
+    .textContent =
+    now.toLocaleDateString(
+      "id-ID",
+      {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }
+    );
+
+
+  updateAttendanceAvailability();
+
 }
 
-.case-level {
-  background: #f3f4f6;
-  padding: 12px 18px;
-  border-radius: 10px;
-  text-align: center;
+
+setInterval(updateClock, 1000);
+
+updateClock();
+
+
+// ==========================================
+// WAKTU ABSENSI
+// ==========================================
+
+function isSessionOpen(session) {
+
+  const now = new Date();
+
+  const minutes =
+    now.getHours() * 60 +
+    now.getMinutes();
+
+
+  const times = {
+
+    morning: {
+      start: 390,
+      end: 420
+    },
+
+    afternoon: {
+      start: 690,
+      end: 720
+    },
+
+    evening: {
+      start: 870,
+      end: 900
+    }
+
+  };
+
+
+  return (
+    minutes >= times[session].start &&
+    minutes <= times[session].end
+  );
+
 }
 
-.case-level span {
-  display: block;
-  font-size: 12px;
-  color: #6b7280;
+
+function updateAttendanceAvailability() {
+
+  [
+    "morning",
+    "afternoon",
+    "evening"
+  ].forEach(session => {
+
+    const status =
+      document.getElementById(
+        session + "Status"
+      );
+
+    const button =
+      document.getElementById(
+        session + "Button"
+      );
+
+
+    if (daily[session]) {
+
+      status.textContent =
+        "✅ Sudah absen";
+
+      button.textContent =
+        "Absensi Selesai";
+
+      button.disabled = true;
+
+      return;
+
+    }
+
+
+    if (isSessionOpen(session)) {
+
+      status.textContent =
+        "🟢 Waktu absensi sedang dibuka";
+
+      button.disabled = false;
+
+    } else {
+
+      status.textContent =
+        "🔒 Absensi belum tersedia atau sudah ditutup";
+
+      button.disabled = true;
+
+    }
+
+  });
+
 }
 
-.case-level strong {
-  font-size: 25px;
-}
 
-.case-info {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 15px 0;
-}
+// ==========================================
+// GAME
+// ==========================================
 
-.case-info span {
-  background: #f3f4f6;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-}
+function startSession(session) {
 
-.case-box {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  border: 1px solid #e5e7eb;
-}
+  if (!isSessionOpen(session)) {
 
-.case-box h3 {
-  margin-bottom: 10px;
-}
+    alert(
+      "Waktu absensi belum tersedia atau sudah berakhir."
+    );
 
-.case-box p {
-  line-height: 1.6;
-  color: #4b5563;
-}
+    return;
 
-.system-steps {
-  display: grid;
-  gap: 15px;
-}
-
-.system-step {
-  display: grid;
-  grid-template-columns: 45px 1fr;
-  gap: 15px;
-  padding: 18px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-}
-
-.system-step > strong {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #111827;
-  color: white;
-  border-radius: 50%;
-  font-size: 20px;
-}
-
-.system-step h4 {
-  margin-bottom: 5px;
-}
-
-.system-step p {
-  color: #6b7280;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.system-step textarea {
-  min-height: 100px;
-}
-
-.case-footer {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.case-footer button {
-  max-width: 220px;
-}
-
-#caseScoreInfo {
-  color: #6b7280;
-  margin-top: 5px;
-  font-size: 14px;
-}
-
-@media (max-width: 700px) {
-
-  .case-header {
-    flex-direction: column;
   }
 
-  .case-footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
 
-  .case-footer button {
-    max-width: none;
-  }
+  currentSession = session;
 
-  .system-step {
-    grid-template-columns: 1fr;
-  }
+
+  const games = [
+    "target",
+    "numbers",
+    "memory"
+  ];
+
+
+  selectedGame =
+    games[
+      Math.floor(
+        Math.random() * games.length
+      )
+    ];
+
+
+  gameScore = 0;
+
+  timeLeft = 60;
+
+  gameFinished = false;
+
+
+  document.getElementById("gameModal")
+    .classList.remove("hidden");
+
+
+  document.getElementById("gameResult")
+    .classList.add("hidden");
+
+
+  startTimer();
+
+  startGame(selectedGame);
+
 }
+
+
+function startTimer() {
+
+  document.getElementById("timer")
+    .textContent = timeLeft;
+
+
+  clearInterval(gameTimer);
+
+
+  gameTimer =
+    setInterval(() => {
+
+      timeLeft--;
+
+      document.getElementById("timer")
+        .textContent = timeLeft;
+
+
+      if (timeLeft <= 0) {
+
+        clearInterval(gameTimer);
+
+        finishGame();
+
+      }
+
+    }, 1000);
+
+}
+
+
+// ==========================================
+// GAME TARGET
+// ==========================================
+
+function startTargetGame() {
+
+  document.getElementById("gameTitle")
+    .textContent =
+    "🎯 Tangkap Target";
+
+
+  document.getElementById("gameInstruction")
+    .textContent =
+    "Klik target sebanyak mungkin selama 1 menit.";
+
+
+  const area =
+    document.getElementById("gameArea");
+
+
+  area.innerHTML = "";
+
+  createTarget();
+
+}
+
+
+function createTarget() {
+
+  if (gameFinished)
+    return;
+
+
+  const area =
+    document.getElementById("gameArea");
+
+
+  const target =
+    document.createElement("div");
+
+
+  target.className = "target";
+
+
+  const maxX =
+    area.clientWidth - 50;
+
+
+  const maxY =
+    area.clientHeight - 50;
+
+
+  target.style.left =
+    Math.max(
+      0,
+      Math.random() * maxX
+    ) + "px";
+
+
+  target.style.top =
+    Math.max(
+      0,
+      Math.random() * maxY
+    ) + "px";
+
+
+  target.onclick = () => {
+
+    gameScore++;
+
+    target.remove();
+
+    createTarget();
+
+  };
+
+
+  area.appendChild(target);
+
+}
+
+
+// ==========================================
+// GAME ANGKA
+// ==========================================
+
+function startNumbersGame() {
+
+  document.getElementById("gameTitle")
+    .textContent =
+    "🔢 Urutan Angka";
+
+
+  document.getElementById("gameInstruction")
+    .textContent =
+    "Klik angka dari 1 sampai 9 secara berurutan.";
+
+
+  const area =
+    document.getElementById("gameArea");
+
+
+  let numbers = [
+    1,2,3,4,5,6,7,8,9
+  ];
+
+
+  numbers.sort(
+    () => Math.random() - 0.5
+  );
+
+
+  let expected = 1;
+
+
+  area.innerHTML = "";
+
+
+  numbers.forEach(number => {
+
+    const button =
+      document.createElement("button");
+
+
+    button.className =
+      "number-button";
+
+
+    button.textContent =
+      number;
+
+
+    button.onclick = () => {
+
+      if (number === expected) {
+
+        button.disabled = true;
+
+        gameScore++;
+
+        expected++;
+
+
+        if (expected > 9) {
+
+          setTimeout(
+            startNumbersGame,
+            300
+          );
+
+        }
+
+      }
+
+    };
+
+
+    area.appendChild(button);
+
+  });
+
+}
+
+
+// ==========================================
+// GAME MEMORY
+// ==========================================
+
+function startMemoryGame() {
+
+  document.getElementById("gameTitle")
+    .textContent =
+    "🧠 Memory Flash";
+
+
+  document.getElementById("gameInstruction")
+    .textContent =
+    "Ingat posisi kotak yang menyala.";
+
+
+  const area =
+    document.getElementById("gameArea");
+
+
+  area.innerHTML = "";
+
+
+  const totalBoxes = 9;
+
+  const activeCount = 3;
+
+
+  let activeIndexes = [];
+
+
+  while (
+    activeIndexes.length <
+    activeCount
+  ) {
+
+    const random =
+      Math.floor(
+        Math.random() * totalBoxes
+      );
+
+
+    if (
+      !activeIndexes.includes(random)
+    ) {
+
+      activeIndexes.push(random);
+
+    }
+
+  }
+
+
+  const boxes = [];
+
+
+  for (
+    let i = 0;
+    i < totalBoxes;
+    i++
+  ) {
+
+    const box =
+      document.createElement("div");
+
+
+    box.className =
+      "memory-box";
+
+
+    box.dataset.index = i;
+
+
+    if (
+      activeIndexes.includes(i)
+    ) {
+
+      box.classList.add(
+        "memory-active"
+      );
+
+    }
+
+
+    boxes.push(box);
+
+    area.appendChild(box);
+
+  }
+
+
+  setTimeout(() => {
+
+    boxes.forEach(box => {
+
+      box.classList.remove(
+        "memory-active"
+      );
+
+    });
+
+
+    let correct = 0;
+
+
+    boxes.forEach(box => {
+
+      box.onclick = () => {
+
+        const index =
+          Number(
+            box.dataset.index
+          );
+
+
+        if (
+          activeIndexes.includes(
+            index
+          )
+        ) {
+
+          box.classList.add(
+            "memory-active"
+          );
+
+
+          box.onclick = null;
+
+
+          correct++;
+
+          gameScore++;
+
+
+          if (
+            correct === activeCount
+          ) {
+
+            setTimeout(
+              startMemoryGame,
+              500
+            );
+
+          }
+
+        }
+
+      };
+
+    });
+
+  }, 2000);
+
+}
+
+
+// ==========================================
+// PILIH GAME
+// ==========================================
+
+function startGame(game) {
+
+  if (game === "target")
+    startTargetGame();
+
+
+  if (game === "numbers")
+    startNumbersGame();
+
+
+  if (game === "memory")
+    startMemoryGame();
+
+}
+
+
+// ==========================================
+// GAME SELESAI
+// ==========================================
+
+function finishGame() {
+
+  gameFinished = true;
+
+
+  document.getElementById("gameArea")
+    .innerHTML = "";
+
+
+  document.getElementById("gameResult")
+    .classList.remove("hidden");
+
+
+  document.getElementById("gameScore")
+    .textContent =
+    "Skor fokusmu: " +
+    gameScore;
+
+}
+
+
+// ==========================================
+// BUKA ABSEN
+// ==========================================
+
+function unlockAttendance() {
+
+  document.getElementById("gameModal")
+    .classList.add("hidden");
+
+
+  document.getElementById("attendanceModal")
+    .classList.remove("hidden");
+
+}
+
+
+// ==========================================
+// ABSEN
+// ==========================================
+
+function confirmAttendance() {
+
+  if (
+    !isSessionOpen(currentSession)
+  ) {
+
+    alert(
+      "Waktu absensi sudah berakhir."
+    );
+
+    closeAttendanceModal();
+
+    return;
+
+  }
+
+
+  daily[currentSession] = true;
+
+
+  addPoints(10);
+
+
+  if (
+    currentSession === "evening"
+  ) {
+
+    unlockReflection();
+
+  }
+
+
+  saveData();
+
+
+  closeAttendanceModal();
+
+
+  updateAttendanceAvailability();
+
+  updateDashboard();
+
+
+  alert(
+    "Absensi berhasil! +10 poin"
+  );
+
+}
+
+
+function closeAttendanceModal() {
+
+  document.getElementById(
+    "attendanceModal"
+  ).classList.add("hidden");
+
+}
+
+
+// ==========================================
+// REFLEKSI
+// ==========================================
+
+const reflectionSets = [
+
+  [
+    "Apa hal paling penting yang kamu lakukan hari ini?",
+    "Apa kesulitan terbesar yang kamu hadapi?",
+    "Bagaimana kamu akan memperbaikinya?"
+  ],
+
+  [
+    "Masalah apa yang kamu hadapi hari ini?",
+    "Menurutmu apa penyebab utama masalah tersebut?",
+    "Solusi apa yang akan kamu coba?"
+  ],
+
+  [
+    "Apa hal baru yang kamu pelajari hari ini?",
+    "Bagian mana yang masih belum kamu pahami?",
+    "Bagaimana rencanamu untuk memahaminya?"
+  ],
+
+  [
+    "Apa perkembanganmu dibanding hari sebelumnya?",
+    "Apa yang masih perlu kamu perbaiki?",
+    "Apa target kecilmu untuk besok?"
+  ],
+
+  [
+    "Apakah kamu sudah menjalankan target hari ini?",
+    "Apa yang membuatmu konsisten atau tidak konsisten?",
+    "Satu tindakan apa yang akan kamu lakukan besok?"
+  ]
+
+];
+
+
+function loadReflectionQuestions() {
+
+  const day =
+    new Date().getDate();
+
+
+  const questions =
+    reflectionSets[
+      day % reflectionSets.length
+    ];
+
+
+  document.getElementById("question1")
+    .textContent =
+    "1. " + questions[0];
+
+
+  document.getElementById("question2")
+    .textContent =
+    "2. " + questions[1];
+
+
+  document.getElementById("question3")
+    .textContent =
+    "3. " + questions[2];
+
+}
+
+
+function unlockReflection() {
+
+  document.getElementById(
+    "reflectionLocked"
+  ).classList.add("hidden");
+
+
+  document.getElementById(
+    "reflectionForm"
+  ).classList.remove("hidden");
+
+
+  loadReflectionQuestions();
+
+}
+
+
+function submitReflection() {
+
+  if (
+    !isSessionOpen("evening")
+  ) {
+
+    alert(
+      "Waktu refleksi sudah berakhir."
+    );
+
+    return;
+
+  }
+
+
+  if (daily.reflection) {
+
+    alert(
+      "Refleksi sudah dikirim."
+    );
+
+    return;
+
+  }
+
+
+  const a1 =
+    document.getElementById(
+      "answer1"
+    ).value.trim();
+
+
+  const a2 =
+    document.getElementById(
+      "answer2"
+    ).value.trim();
+
+
+  const a3 =
+    document.getElementById(
+      "answer3"
+    ).value.trim();
+
+
+  if (!a1 || !a2 || !a3) {
+
+    alert(
+      "Jawab semua pertanyaan refleksi."
+    );
+
+    return;
+
+  }
+
+
+  let points = 15;
+
+
+  const length =
+    a1.length +
+    a2.length +
+    a3.length;
+
+
+  if (length >= 300)
+    points += 5;
+
+
+  daily.reflection = true;
+
+
+  daily.reflectionAnswers = [
+    a1,
+    a2,
+    a3
+  ];
+
+
+  addPoints(points);
+
+
+  saveData();
+
+
+  updateDashboard();
+
+
+  document.getElementById(
+    "reflectionButton"
+  ).disabled = true;
+
+
+  document.getElementById(
+    "reflectionButton"
+  ).textContent =
+    "Refleksi Berhasil Disimpan";
+
+
+  alert(
+    "Refleksi berhasil disimpan! +" +
+    points +
+    " poin"
+  );
+
+}
+
+
+// ==========================================
+// KEGIATAN
+// ==========================================
+
+document.querySelectorAll(
+  ".activity-check"
+).forEach(check => {
+
+  check.addEventListener(
+    "change",
+    () => {
+
+      const activity =
+        check.dataset.activity;
+
+
+      if (check.checked) {
+
+        if (
+          !daily.activities
+            .includes(activity)
+        ) {
+
+          daily.activities.push(
+            activity
+          );
+
+          addPoints(5);
+
+        }
+
+      } else {
+
+        daily.activities =
+          daily.activities.filter(
+            item =>
+              item !== activity
+          );
+
+        daily.points =
+          Math.max(
+            0,
+            daily.points - 5
+          );
+
+        userData.totalPoints =
+          Math.max(
+            0,
+            userData.totalPoints - 5
+          );
+
+      }
+
+
+      saveData();
+
+      updateDashboard();
+
+    }
+  );
+
+});
+
+
+// ==========================================
+// POIN
+// ==========================================
+
+function addPoints(points) {
+
+  daily.points += points;
+
+  userData.totalPoints += points;
+
+}
+
+
+// ==========================================
+// SAVE
+// ==========================================
+
+function saveData() {
+
+  userData.history[today] =
+    daily.points;
+
+
+  localStorage.setItem(
+    "sistemUserData",
+    JSON.stringify(userData)
+  );
+
+}
+
+
+// ==========================================
+// DASHBOARD
+// ==========================================
+
+function updateDashboard() {
+
+  document.getElementById(
+    "todayPoints"
+  ).textContent =
+    daily.points;
+
+
+  document.getElementById(
+    "totalPoints"
+  ).textContent =
+    userData.totalPoints;
+
+
+  document.getElementById(
+    "streak"
+  ).textContent =
+    userData.streak +
+    " Hari";
+
+
+  const completed =
+    [
+      daily.morning,
+      daily.afternoon,
+      daily.evening
+    ].filter(Boolean).length;
+
+
+  document.getElementById(
+    "dailyStatus"
+  ).textContent =
+    "Hari ini kamu telah menyelesaikan " +
+    completed +
+    " dari 3 sesi absensi.";
+
+
+  renderChart(
+    currentChartType
+  );
+
+
+  updateCaseProgress();
+
+}
+
+
+// ==========================================
+// STREAK
+// ==========================================
+
+function updateStreak() {
+
+  const active =
+    daily.morning &&
+    daily.afternoon &&
+    daily.evening &&
+    daily.reflection;
+
+
+  if (!active)
+    return;
+
+
+  if (
+    userData.lastActiveDate === today
+  )
+    return;
+
+
+  const yesterday =
+    new Date();
+
+
+  yesterday.setDate(
+    yesterday.getDate() - 1
+  );
+
+
+  const yesterdayString =
+    yesterday
+      .toISOString()
+      .split("T")[0];
+
+
+  if (
+    userData.lastActiveDate ===
+    yesterdayString
+  ) {
+
+    userData.streak++;
+
+  } else {
+
+    userData.streak = 1;
+
+  }
+
+
+  userData.lastActiveDate =
+    today;
+
+
+  saveData();
+
+}
+
+
+// ==========================================
+// GRAFIK
+// ==========================================
+
+let chart = null;
+
+let currentChartType =
+  "weekly";
+
+
+function showChart(type) {
+
+  currentChartType =
+    type;
+
+
+  document.getElementById(
+    "weeklyTab"
+  ).classList.toggle(
+    "active-tab",
+    type === "weekly"
+  );
+
+
+  document.getElementById(
+    "monthlyTab"
+  ).classList.toggle(
+    "active-tab",
+    type === "monthly"
+  );
+
+
+  renderChart(type);
+
+}
+
+
+function renderChart(type) {
+
+  const labels = [];
+
+  const data = [];
+
+
+  const days =
+    type === "weekly"
+      ? 7
+      : 30;
+
+
+  for (
+    let i = days - 1;
+    i >= 0;
+    i--
+  ) {
+
+    const date =
+      new Date();
+
+
+    date.setDate(
+      date.getDate() - i
+    );
+
+
+    const key =
+      date
+        .toISOString()
+        .split("T")[0];
+
+
+    labels.push(
+      date.toLocaleDateString(
+        "id-ID",
+        {
+          day: "numeric",
+          month:
+            type === "monthly"
+              ? "short"
+              : undefined
+        }
+      )
+    );
+
+
+    data.push(
+      userData.history[key] || 0
+    );
+
+  }
+
+
+  const ctx =
+    document.getElementById(
+      "activityChart"
+    );
+
+
+  if (chart)
+    chart.destroy();
+
+
+  chart =
+    new Chart(
+      ctx,
+      {
+
+        type: "line",
+
+        data: {
+
+          labels: labels,
+
+          datasets: [
+
+            {
+
+              label:
+                "Poin Keaktifan",
+
+              data: data,
+
+              borderWidth: 3,
+
+              tension: 0.3
+
+            }
+
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false
+
+        }
+
+      }
+    );
+
+
+  generateInsight(data);
+
+}
+
+
+function generateInsight(data) {
+
+  const recent =
+    data.slice(-3);
+
+
+  const previous =
+    data.slice(-6, -3);
+
+
+  const recentAverage =
+    recent.reduce(
+      (a, b) => a + b,
+      0
+    ) / recent.length;
+
+
+  const previousAverage =
+    previous.length
+      ? previous.reduce(
+          (a, b) => a + b,
+          0
+        ) / previous.length
+      : 0;
+
+
+  let message =
+    "Mulai aktivitasmu untuk melihat perkembangan.";
+
+
+  if (
+    recentAverage >
+      previousAverage &&
+    recentAverage > 0
+  ) {
+
+    message =
+      "📈 Aktivitasmu menunjukkan perkembangan dibanding periode sebelumnya.";
+
+  }
+
+  else if (
+    recentAverage <
+      previousAverage &&
+    previousAverage > 0
+  ) {
+
+    message =
+      "⚠️ Aktivitasmu sedang menurun. Coba evaluasi kebiasaanmu.";
+
+  }
+
+  else if (
+    recentAverage > 0
+  ) {
+
+    message =
+      "📊 Aktivitasmu relatif stabil. Pertahankan konsistensimu.";
+
+  }
+
+
+  document.getElementById(
+    "insight"
+  ).textContent =
+    message;
+
+}
+
+
+// ==================================================
+// KASUS MINGGUAN
+// ==================================================
+
+const weeklyCases = [
+
+  {
+    category:
+      "🤖 Teknologi & Digital",
+
+    level: 1,
+
+    title:
+      "AI dan Jawaban Instan",
+
+    description:
+      "Semakin banyak siswa menggunakan AI untuk mendapatkan jawaban tugas. Sebagian siswa langsung menyalin jawaban tanpa memahami prosesnya. Bagaimana cara memanfaatkan AI tanpa membuat siswa kehilangan kemampuan berpikir?"
+  },
+
+
+  {
+    category:
+      "🌍 Lingkungan & Perubahan Iklim",
+
+    level: 1,
+
+    title:
+      "Sampah di Sekolah",
+
+    description:
+      "Sampah plastik masih banyak ditemukan setelah jam istirahat. Sekolah sudah menyediakan tempat sampah, tetapi kebiasaan siswa belum berubah. Bagaimana cara mengurangi masalah tersebut?"
+  },
+
+
+  {
+    category:
+      "🎓 Pendidikan & Pelajar",
+
+    level: 2,
+
+    title:
+      "Belajar Hanya Saat Ujian",
+
+    description:
+      "Sebagian siswa belajar secara intensif hanya ketika ujian sudah dekat. Setelah ujian selesai, materi sering dilupakan. Bagaimana sekolah dapat mendorong kebiasaan belajar yang lebih konsisten?"
+  },
+
+
+  {
+    category:
+      "🏙️ Sosial & Masyarakat",
+
+    level: 2,
+
+    title:
+      "Informasi Belum Terverifikasi",
+
+    description:
+      "Sebuah informasi viral beredar di grup siswa. Sebagian siswa langsung menyebarkannya tanpa memeriksa sumber. Bagaimana cara membuat siswa lebih kritis terhadap informasi?"
+  },
+
+
+  {
+    category:
+      "💰 Ekonomi & Masa Depan",
+
+    level: 2,
+
+    title:
+      "Pekerjaan dan Otomatisasi",
+
+    description:
+      "Perkembangan teknologi membuat beberapa pekerjaan dapat dilakukan secara otomatis. Di sisi lain, teknologi juga menciptakan pekerjaan baru. Apa yang sebaiknya dipersiapkan siswa sejak sekolah?"
+  },
+
+
+  {
+    category:
+      "🏛️ Kebijakan & Masalah Publik",
+
+    level: 3,
+
+    title:
+      "Teknologi dalam Layanan Publik",
+
+    description:
+      "Sebuah daerah ingin menggunakan teknologi untuk mempercepat pelayanan masyarakat. Namun, sebagian masyarakat khawatir terhadap privasi dan keamanan data. Bagaimana membuat solusi yang tetap efisien tetapi melindungi masyarakat?"
+  }
+
+];
+
+
+// ==========================================
+// MINGGU
+// ==========================================
+
+function getWeekNumber(date = new Date()) {
+
+  const first =
+    new Date(
+      date.getFullYear(),
+      0,
+      1
+    );
+
+
+  const days =
+    Math.floor(
+      (date - first) /
+      86400000
+    );
+
+
+  return Math.ceil(
+    (
+      days +
+      first.getDay() +
+      1
+    ) / 7
+  );
+
+}
+
+
+// ==========================================
+// PILIH KASUS
+// ==========================================
+
+function getWeeklyCase() {
+
+  const week =
+    getWeekNumber();
+
+
+  const year =
+    new Date().getFullYear();
+
+
+  const saved =
+    JSON.parse(
+      localStorage.getItem(
+        "sistemWeeklyCase"
+      )
+    );
+
+
+  if (
+    saved &&
+    saved.week === week &&
+    saved.year === year
+  ) {
+
+    return saved.case;
+
+  }
+
+
+  /*
+    Untuk prototype:
+    satu kasus dipilih setiap minggu.
+
+    Versi database nanti:
+    setiap siswa dapat kasus
+    berbeda berdasarkan akun.
+  */
+
+  const index =
+    Math.floor(
+      Math.random() *
+      weeklyCases.length
+    );
+
+
+  const selected =
+    weeklyCases[index];
+
+
+  localStorage.setItem(
+    "sistemWeeklyCase",
+    JSON.stringify({
+
+      week: week,
+
+      year: year,
+
+      case: selected
+
+    })
+  );
+
+
+  return selected;
+
+}
+
+
+// ==========================================
+// LOAD KASUS
+// ==========================================
+
+function loadWeeklyCase() {
+
+  const data =
+    getWeeklyCase();
+
+
+  document.getElementById(
+    "caseCategory"
+  ).textContent =
+    data.category;
+
+
+  document.getElementById(
+    "caseLevel"
+  ).textContent =
+    data.level;
+
+
+  document.getElementById(
+    "caseTitle"
+  ).textContent =
+    data.title;
+
+
+  document.getElementById(
+    "caseDescription"
+  ).textContent =
+    data.description;
+
+
+  loadWeeklyProgress();
+
+}
+
+
+// ==========================================
+// PROGRESS KASUS
+// ==========================================
+
+function getWeeklyProgress() {
+
+  const saved =
+    JSON.parse(
+      localStorage.getItem(
+        "sistemWeeklyProgress"
+      )
+    );
+
+
+  const week =
+    getWeekNumber();
+
+
+  if (
+    saved &&
+    saved.week === week
+  ) {
+
+    return saved;
+
+  }
+
+
+  return {
+
+    week: week,
+
+    submitted: false,
+
+    score: 0,
+
+    answers: {}
+
+  };
+
+}
+
+
+// ==========================================
+// AUTOSAVE
+// ==========================================
+
+function saveWeeklyAnswers() {
+
+  const data =
+    getWeeklyProgress();
+
+
+  data.answers = {
+
+    S1:
+      document.getElementById(
+        "caseS1"
+      ).value,
+
+    I:
+      document.getElementById(
+        "caseI"
+      ).value,
+
+    S2:
+      document.getElementById(
+        "caseS2"
+      ).value,
+
+    T:
+      document.getElementById(
+        "caseT"
+      ).value,
+
+    E:
+      document.getElementById(
+        "caseE"
+      ).value,
+
+    M:
+      document.getElementById(
+        "caseM"
+      ).value
+
+  };
+
+
+  localStorage.setItem(
+    "sistemWeeklyProgress",
+    JSON.stringify(data)
+  );
+
+
+  updateCaseProgress();
+
+}
+
+
+// ==========================================
+// PROGRESS BAR
+// ==========================================
+
+function updateCaseProgress() {
+
+  const ids = [
+    "caseS1",
+    "caseI",
+    "caseS2",
+    "caseT",
+    "caseE",
+    "caseM"
+  ];
+
+
+  let completed = 0;
+
+
+  ids.forEach(id => {
+
+    const element =
+      document.getElementById(id);
+
+
+    if (
+      element &&
+      element.value.trim().length >= 20
+    ) {
+
+      completed++;
+
+    }
+
+  });
+
+
+  document.getElementById(
+    "caseProgress"
+  ).textContent =
+    completed + " / 6";
+
+
+  document.getElementById(
+    "caseProgressBar"
+  ).style.width =
+    (completed / 6 * 100) + "%";
+
+}
+
+
+// ==========================================
+// KUMPULKAN KASUS
+// ==========================================
+
+function submitWeeklyCase() {
+
+  const ids = [
+    "caseS1",
+    "caseI",
+    "caseS2",
+    "caseT",
+    "caseE",
+    "caseM"
+  ];
+
+
+  const answers =
+    ids.map(
+      id =>
+        document
+          .getElementById(id)
+          .value
+          .trim()
+    );
+
+
+  if (
+    answers.some(
+      answer =>
+        answer.length < 20
+    )
+  ) {
+
+    alert(
+      "Lengkapi semua tahap SISTEM. Setiap jawaban minimal 20 karakter."
+    );
+
+    return;
+
+  }
+
+
+  const data =
+    getWeeklyProgress();
+
+
+  if (data.submitted) {
+
+    alert(
+      "Kasus minggu ini sudah dikumpulkan."
+    );
+
+    return;
+
+  }
+
+
+  let score = 40;
+
+
+  const totalLength =
+    answers.reduce(
+      (sum, answer) =>
+        sum + answer.length,
+      0
+    );
+
+
+  /*
+    Penilaian prototype.
+
+    40 poin =
+    menyelesaikan semua tahap.
+
+    30 poin =
+    kedalaman analisis.
+
+    20 poin =
+    kualitas solusi.
+
+    10 poin =
+    kelengkapan.
+  */
+
+
+  if (totalLength >= 300)
+    score += 10;
+
+
+  if (totalLength >= 600)
+    score += 10;
+
+
+  if (totalLength >= 900)
+    score += 10;
+
+
+  const solution =
+    document.getElementById(
+      "caseM"
+    ).value;
+
+
+  if (solution.length >= 100)
+    score += 10;
+
+
+  if (solution.length >= 200)
+    score += 10;
+
+
+  score =
+    Math.min(
+      score,
+      100
+    );
+
+
+  data.submitted = true;
+
+  data.score = score;
+
+
+  saveWeeklyAnswers();
+
+
+  localStorage.setItem(
+    "sistemWeeklyProgress",
+    JSON.stringify(data)
+  );
+
+
+  /*
+    Masuk ke poin keaktifan
+  */
+
+  if (
+    !daily.weeklyCaseCompleted
+  ) {
+
+    daily.weeklyCaseCompleted =
+      true;
+
+
+    daily.weeklyCaseScore =
+      score;
+
+
+    addPoints(score);
+
+
+    saveData();
+
+  }
+
+
+  document.getElementById(
+    "caseSubmitButton"
+  ).disabled = true;
+
+
+  document.getElementById(
+    "caseSubmitButton"
+  ).textContent =
+    "✅ Kasus Sudah Dikumpulkan";
+
+
+  document.getElementById(
+    "caseScoreInfo"
+  ).textContent =
+    "Skor kasus: " +
+    score +
+    "/100 poin keaktifan";
+
+
+  updateDashboard();
+
+
+  alert(
+    "Kasus berhasil dikumpulkan!\n\n" +
+    "Skor: " +
+    score +
+    "/100\n\n" +
+    "Poin telah masuk ke keaktifan."
+  );
+
+}
+
+
+// ==========================================
+// LOAD PROGRESS
+// ==========================================
+
+function loadWeeklyProgress() {
+
+  const data =
+    getWeeklyProgress();
+
+
+  if (data.answers) {
+
+    document.getElementById(
+      "caseS1"
+    ).value =
+      data.answers.S1 || "";
+
+
+    document.getElementById(
+      "caseI"
+    ).value =
+      data.answers.I || "";
+
+
+    document.getElementById(
+      "caseS2"
+    ).value =
+      data.answers.S2 || "";
+
+
+    document.getElementById(
+      "caseT"
+    ).value =
+      data.answers.T || "";
+
+
+    document.getElementById(
+      "caseE"
+    ).value =
+      data.answers.E || "";
+
+
+    document.getElementById(
+      "caseM"
+    ).value =
+      data.answers.M || "";
+
+  }
+
+
+  if (data.submitted) {
+
+    document.getElementById(
+      "caseSubmitButton"
+    ).disabled = true;
+
+
+    document.getElementById(
+      "caseSubmitButton"
+    ).textContent =
+      "✅ Kasus Sudah Dikumpulkan";
+
+
+    document.getElementById(
+      "caseScoreInfo"
+    ).textContent =
+      "Skor kasus: " +
+      data.score +
+      "/100 poin keaktifan";
+
+  }
+
+
+  updateCaseProgress();
+
+}
+
+
+// ==========================================
+// AUTOSAVE EVENT
+// ==========================================
+
+[
+  "caseS1",
+  "caseI",
+  "caseS2",
+  "caseT",
+  "caseE",
+  "caseM"
+].forEach(id => {
+
+  document.getElementById(id)
+    .addEventListener(
+      "input",
+      saveWeeklyAnswers
+    );
+
+});
+
+
+// ==========================================
+// LOAD DATA AWAL
+// ==========================================
+
+function loadTodayData() {
+
+  document
+    .querySelectorAll(
+      ".activity-check"
+    )
+    .forEach(check => {
+
+      if (
+        daily.activities
+          .includes(
+            check.dataset.activity
+          )
+      ) {
+
+        check.checked = true;
+
+      }
+
+    });
+
+
+  if (daily.reflection) {
+
+    document.getElementById(
+      "reflectionLocked"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+      "reflectionForm"
+    ).classList.remove("hidden");
+
+
+    loadReflectionQuestions();
+
+
+    const answers =
+      daily.reflectionAnswers ||
+      ["", "", ""];
+
+
+    document.getElementById(
+      "answer1"
+    ).value = answers[0];
+
+
+    document.getElementById(
+      "answer2"
+    ).value = answers[1];
+
+
+    document.getElementById(
+      "answer3"
+    ).value = answers[2];
+
+
+    document.getElementById(
+      "reflectionButton"
+    ).disabled = true;
+
+
+    document.getElementById(
+      "reflectionButton"
+    ).textContent =
+      "Refleksi Sudah Disimpan";
+
+  }
+
+
+  if (
+    daily.evening &&
+    !daily.reflection
+  ) {
+
+    unlockReflection();
+
+  }
+
+
+  updateDashboard();
+
+  updateAttendanceAvailability();
+
+}
+
+
+// Jalankan
+loadWeeklyCase();
+
+loadTodayData();
