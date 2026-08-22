@@ -1,0 +1,105 @@
+<!-- KASUS MINGGUAN -->
+<section class="card weekly-case-card">
+
+  <div class="case-header">
+    <div>
+      <h2>🧩 Kasus Mingguan</h2>
+      <p class="subtitle">
+        Latih kemampuan problem solving melalui masalah nyata.
+      </p>
+    </div>
+
+    <div class="case-level">
+      <span>Level</span>
+      <strong id="caseLevel">1</strong>
+    </div>
+  </div>
+
+  <div class="case-info">
+    <span id="caseCategory">🤖 Teknologi & Digital</span>
+    <span id="caseDeadline">Deadline: Minggu</span>
+  </div>
+
+  <div class="case-box">
+    <h3 id="caseTitle">Memuat kasus...</h3>
+    <p id="caseDescription"></p>
+  </div>
+
+  <div class="system-steps">
+
+    <div class="system-step">
+      <strong>S</strong>
+      <div>
+        <h4>Situasi</h4>
+        <p>Jelaskan masalah yang terjadi.</p>
+        <textarea id="caseS1"
+          placeholder="Apa masalah yang terjadi?"></textarea>
+      </div>
+    </div>
+
+    <div class="system-step">
+      <strong>I</strong>
+      <div>
+        <h4>Identifikasi</h4>
+        <p>Temukan inti dan penyebab masalah.</p>
+        <textarea id="caseI"
+          placeholder="Apa inti dan penyebab masalah?"></textarea>
+      </div>
+    </div>
+
+    <div class="system-step">
+      <strong>S</strong>
+      <div>
+        <h4>Susun</h4>
+        <p>Pecah masalah menjadi bagian-bagian kecil.</p>
+        <textarea id="caseS2"
+          placeholder="Apa saja bagian dari masalah ini?"></textarea>
+      </div>
+    </div>
+
+    <div class="system-step">
+      <strong>T</strong>
+      <div>
+        <h4>Temukan Hubungan</h4>
+        <p>Jelaskan hubungan antar faktor.</p>
+        <textarea id="caseT"
+          placeholder="Apa saja faktor yang saling berhubungan?"></textarea>
+      </div>
+    </div>
+
+    <div class="system-step">
+      <strong>E</strong>
+      <div>
+        <h4>Evaluasi</h4>
+        <p>Bandingkan beberapa solusi.</p>
+        <textarea id="caseE"
+          placeholder="Solusi apa saja yang mungkin? Apa kelebihan dan kekurangannya?"></textarea>
+      </div>
+    </div>
+
+    <div class="system-step">
+      <strong>M</strong>
+      <div>
+        <h4>Menjadi Problem Solver</h4>
+        <p>Pilih solusi dan buat rencana tindakan.</p>
+        <textarea id="caseM"
+          placeholder="Solusi apa yang kamu pilih dan bagaimana menerapkannya?"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="case-footer">
+    <div>
+      <strong>🏆 Maksimal 100 poin</strong>
+      <p id="caseScoreInfo">
+        Selesaikan kasus untuk mendapatkan poin keaktifan.
+      </p>
+    </div>
+
+    <button onclick="submitWeeklyCase()" id="caseSubmitButton">
+      Kumpulkan Kasus
+    </button>
+  </div>
+
+</section>
